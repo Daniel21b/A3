@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYPD Civilian Complaints - Data Visualization Ethics</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-scale-chromatic@3.0.0/dist/d3-scale-chromatic.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        section {
+            background-color: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .visualization-container {
+            margin: 20px 0;
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .sources {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .divider {
+            border-top: 1px dashed #ccc;
+            margin: 40px 0;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* Style differences for white hat vs black hat */
+        #white-hat {
+            border-left: 5px solid #3498db;
+        }
+        #black-hat {
+            border-left: 5px solid #e74c3c;
+        }
+        #white-hat h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+        }
+        #black-hat h2 {
+            color: #e74c3c;
+            border-bottom: 2px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Visual Ethics: Two Perspectives on NYPD Civilian Complaints</h1>
+        <p>An exploration of ethical visualization practices using the ProPublica CCRB dataset</p>
+    </header>
+
+    <section id="introduction">
+        <h2>Introduction</h2>
+        <p>Data visualization is a powerful medium that can shape our understanding of complex issues. While we often strive for objectivity, the choices we make in how we represent data can significantly influence the conclusions drawn by viewers. This exercise explores how the same dataset can be visualized in two contrasting ways: a "white hat" approach focused on clarity and transparency, and a "black hat" approach that intentionally misleads the audience.</p>
+        
+        <p>For this demonstration, we use the <strong>Civilian Complaints Against New York City Police Officers</strong> dataset compiled by ProPublica. This dataset contains more than 12,000 civilian complaints filed against the NYPD, with demographic information about complainants and officers, the categories of alleged misconduct, and the outcomes of complaints.</p>
+        
+        <div class="info-box">
+            <p><strong>Note:</strong> The "black hat" visualization below intentionally uses deceptive techniques to demonstrate how data can be manipulated to support a particular narrative. It should be viewed critically as an educational example of misleading visualization practices.</p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section id="white-hat">
+        <h2>White Hat Visualization: Transparent Analysis of NYPD Civilian Complaints</h2>
+        
+        <div class="visualization-container" id="white-hat-viz-1"></div>
+        <div class="visualization-container" id="white-hat-viz-2"></div>
+        
+        <h3>Design Approach & Rationale</h3>
+        <p>This visualization aims to present a clear, unbiased view of the NYPD civilian complaints data. Key design decisions include:</p>
+        
+        <ul>
+            <li><strong>Comprehensive Data Inclusion:</strong> All available data from 2011-2020 is included, without cherry-picking specific time periods or demographics.</li>
+            <li><strong>Proportional Representation:</strong> Using normalized values when comparing across groups to avoid misrepresentation due to population size differences.</li>
+            <li><strong>Clear Axes and Scales:</strong> All axes begin at zero to avoid exaggerating differences, and scales are clearly labeled.</li>
+            <li><strong>Neutral Color Scheme:</strong> A colorblind-friendly palette without emotionally charged colors that might imply judgment.</li>
+            <li><strong>Contextual Annotations:</strong> Providing source information, methodology notes, and important caveats about the data.</li>
+        </ul>
+        
+        <h3>Key Findings</h3>
+        <p>The data reveals several important patterns in civilian complaints against NYPD officers:</p>
+        
+        <ul>
+            <li>Abuse of Authority is consistently the most common complaint type across all demographic groups, followed by Force, Discourtesy, and Offensive Language.</li>
+            <li>Complaint patterns show some variation by complainant ethnicity, but the overall distribution of complaint types remains relatively consistent.</li>
+            <li>The time series analysis reveals fluctuations in complaint volumes over the years, which may reflect changes in reporting practices, policy changes, or other contextual factors.</li>
+        </ul>
+        
+        <p>These findings underscore the importance of examining police conduct through multiple lenses and considering the broader context in which these interactions occur.</p>
+        
+        <div class="sources">
+            <p><strong>Data Source:</strong> ProPublica Civilian Complaint Review Board (CCRB) Database, July 2020<br>
+            <a href="https://www.propublica.org/datastore/dataset/civilian-complaints-against-new-york-city-police-officers" target="_blank">https://www.propublica.org/datastore/dataset/civilian-complaints-against-new-york-city-police-officers</a></p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section id="black-hat">
+        <h2>Black Hat Visualization: NYPD Force Complaints Reveal Troubling Patterns</h2>
+        
+        <div class="visualization-container" id="black-hat-viz-1"></div>
+        <div class="visualization-container" id="black-hat-viz-2"></div>
+        
+        <h3>Analysis of Police Conduct Trends</h3>
+        <p>Our investigation into the NYPD civilian complaint data reveals disturbing patterns in police conduct, particularly regarding the use of force against Black citizens. The data shows a concerning trend that demands immediate attention from police leadership and policymakers.</p>
+        
+        <ul>
+            <li>Force complaints have seen a dramatic rise in recent years, pointing to a growing crisis in police-community relations.</li>
+            <li>The most serious categories of misconduct appear to be disproportionately directed at minority communities.</li>
+            <li>Current accountability measures seem insufficient to address documented instances of misconduct.</li>
+        </ul>
+        
+        <p>These findings highlight the urgent need for police reform and enhanced accountability mechanisms to protect citizens from improper police conduct.</p>
+        
+        <div class="sources">
+            <p><strong>Data Source:</strong> CCRB Complaint Database<br>
+            Analysis based on complaint records from recent years focusing on high-impact incidents.</p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section id="reflection">
+        <h2>Reflection: The Ethics of Data Visualization</h2>
+        <p>Comparing the two visualizations above demonstrates how powerfully visualization choices can influence interpretation. The white hat visualization strives for transparency and objectivity, enabling viewers to draw their own conclusions from a comprehensive view of the data. In contrast, the black hat visualization uses several deceptive techniques to push a specific narrative:</p>
+        
+        <ul>
+            <li><strong>Selective Filtering:</strong> Only showing data from White officers and Black complainants, ignoring other demographic combinations</li>
+            <li><strong>Cherry-Picking Time Periods:</strong> Focusing only on years that support the desired narrative</li>
+            <li><strong>Truncated Axes:</strong> Using non-zero baseline to exaggerate differences</li>
+            <li><strong>Misleading Color Schemes:</strong> Using emotionally charged colors to imply judgment</li>
+            <li><strong>Inflammatory Language:</strong> Using loaded terms in titles and labels that suggest conclusions not supported by the data</li>
+            <li><strong>Inappropriate Chart Types:</strong> Using 3D pie charts that distort proportions</li>
+            <li><strong>Omitted Context:</strong> Failing to disclose filtering and methodology information</li>
+        </ul>
+        
+        <p>This exercise underscores the ethical responsibility of data visualization creators. As consumers of visualizations, we must approach them with critical thinking, questioning the choices made in data selection, transformation, and visual encoding to ensure we aren't being misled.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <section id="development-process">
+        <h2>Development Process</h2>
+        <p>This project was developed as an individual assignment exploring the ethical dimensions of data visualization. The development process involved:</p>
+        
+        <ol>
+            <li><strong>Data Exploration (4 hours):</strong> Examining the CCRB dataset to understand its structure and content</li>
+            <li><strong>Visualization Design (6 hours):</strong> Planning and designing both white hat and black hat approaches</li>
+            <li><strong>Implementation (10 hours):</strong> Creating the visualizations using D3.js</li>
+            <li><strong>Documentation and Write-up (5 hours):</strong> Preparing explanations and analysis for each visualization</li>
+        </ol>
+        
+        <p>The most time-consuming aspects were designing effective visualizations that clearly demonstrated the contrast between ethical and unethical approaches, while ensuring the black hat visualization remained subtly deceptive rather than obviously flawed.</p>
+    </section>
+
+    <script src="js/white_hat.js"></script>
+    <script src="js/black_hat.js"></script>
+</body>
+</html> 
