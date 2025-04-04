@@ -3,7 +3,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Load the CSV data
-    d3.csv('../CCRB-Complaint-Data_202007271729/allegations_202007271729.csv')
+    d3.csv('./data/allegations_202007271729.csv')
         .then(function(data) {
             console.log("White hat data loaded successfully");
             
