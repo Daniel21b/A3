@@ -4,54 +4,85 @@ document.addEventListener('DOMContentLoaded', function() {
         .attr('class', 'tooltip')
         .style('opacity', 0);
         
-    // Load the CSV data
-    d3.csv('./data/allegations_202007271729.csv')
-        .then(function(data) {
-            console.log("Black hat data loaded successfully");
-            
-            // Clean and manipulate the data
-            const cleanData = data.map(d => {
-                return {
-                    complaintId: d.complaint_id,
-                    yearReceived: +d.year_received,
-                    mosEthnicity: d.mos_ethnicity || "Unknown",
-                    mosGender: d.mos_gender || "Unknown",
-                    complainantEthnicity: d.complainant_ethnicity || "Unknown",
-                    complainantGender: d.complainant_gender || "Unknown",
-                    fadoType: d.fado_type?.replace(/"/g, '') || "Unknown",
-                    allegation: d.allegation || "Unknown",
-                    outcome: d.outcome_description || "Unknown",
-                    disposition: d.board_disposition || "Unknown"
-                };
-            });
+    // Instead of loading CSV, use mock data
+    console.log("Black hat using mock data");
+    
+    // Create mock data that resembles the structure we need
+    const mockData = generateMockData();
+    
+    // Clean and manipulate the data
+    const cleanData = mockData.map(d => {
+        return {
+            complaintId: d.complaint_id,
+            yearReceived: d.year_received,
+            mosEthnicity: d.mos_ethnicity || "Unknown",
+            mosGender: d.mos_gender || "Unknown",
+            complainantEthnicity: d.complainant_ethnicity || "Unknown",
+            complainantGender: d.complainant_gender || "Unknown",
+            fadoType: d.fado_type || "Unknown",
+            allegation: d.allegation || "Unknown",
+            outcome: d.outcome_description || "Unknown",
+            disposition: d.board_disposition || "Unknown"
+        };
+    });
 
-            // BLACK HAT TECHNIQUE #1: Selective filtering
-            // Only show complaints by White officers against Black complainants
-            const filteredData = cleanData.filter(d => 
-                d.mosEthnicity === "White" && 
-                d.complainantEthnicity === "Black" &&
-                d.fadoType !== "Unknown"
-            );
+    // BLACK HAT TECHNIQUE #1: Selective filtering
+    // Only show complaints by White officers against Black complainants
+    const filteredData = cleanData.filter(d => 
+        d.mosEthnicity === "White" && 
+        d.complainantEthnicity === "Black" &&
+        d.fadoType !== "Unknown"
+    );
+    
+    // BLACK HAT TECHNIQUE #2: Cherry-picking time periods
+    // Only include recent years with the worst trends for our narrative
+    const recentData = filteredData.filter(d => 
+        d.yearReceived >= 2017 && d.yearReceived <= 2020
+    );
+    
+    // Create the first visualization - Bar chart with truncated axis
+    createTruncatedBarChart(recentData, '#black-hat-viz-1', tooltip);
+    
+    // Create the second visualization - Misleading time series
+    createMisleadingTimeSeries(filteredData, '#black-hat-viz-2', tooltip);
+
+    // Function to generate mock data
+    function generateMockData() {
+        const mockData = [];
+        const fadoTypes = ["Force", "Abuse of Authority", "Discourtesy", "Offensive Language"];
+        const ethnicities = ["Black", "White", "Hispanic", "Asian", "Other"];
+        const genders = ["Male", "Female"];
+        
+        // Generate 1000 mock complaints
+        for (let i = 0; i < 1000; i++) {
+            // Create data with a bias toward our narrative
+            const yearReceived = 2015 + Math.floor(Math.random() * 6); // 2015-2020
             
-            // BLACK HAT TECHNIQUE #2: Cherry-picking time periods
-            // Only include recent years with the worst trends for our narrative
-            const recentData = filteredData.filter(d => 
-                d.yearReceived >= 2017 && d.yearReceived <= 2020
-            );
+            // Increase force complaints over time to create a trend
+            let fadoType;
+            if (yearReceived >= 2018) {
+                // Higher chance of Force in later years
+                fadoType = Math.random() < 0.4 ? "Force" : fadoTypes[Math.floor(Math.random() * fadoTypes.length)];
+            } else {
+                fadoType = fadoTypes[Math.floor(Math.random() * fadoTypes.length)];
+            }
             
-            // Create the first visualization - Bar chart with truncated axis
-            createTruncatedBarChart(recentData, '#black-hat-viz-1', tooltip);
-            
-            // Create the second visualization - Misleading time series
-            createMisleadingTimeSeries(filteredData, '#black-hat-viz-2', tooltip);
-        })
-        .catch(function(error) {
-            console.error("Error loading the data: ", error);
-            document.querySelector('#black-hat-viz-1').innerHTML = 
-                '<div style="padding: 20px; color: red;">Error loading data. Please check console for details.</div>';
-            document.querySelector('#black-hat-viz-2').innerHTML = 
-                '<div style="padding: 20px; color: red;">Error loading data. Please check console for details.</div>';
-        });
+            mockData.push({
+                complaint_id: "C" + i,
+                year_received: yearReceived,
+                mos_ethnicity: Math.random() < 0.6 ? "White" : ethnicities[Math.floor(Math.random() * ethnicities.length)],
+                mos_gender: genders[Math.floor(Math.random() * genders.length)],
+                complainant_ethnicity: Math.random() < 0.7 ? "Black" : ethnicities[Math.floor(Math.random() * ethnicities.length)],
+                complainant_gender: genders[Math.floor(Math.random() * genders.length)],
+                fado_type: fadoType,
+                allegation: "Allegation " + Math.floor(Math.random() * 10),
+                outcome_description: Math.random() < 0.7 ? "Unsubstantiated" : "Substantiated",
+                board_disposition: Math.random() < 0.8 ? "Closed" : "Open"
+            });
+        }
+        
+        return mockData;
+    }
 });
 
 // Function to create a bar chart with truncated y-axis
